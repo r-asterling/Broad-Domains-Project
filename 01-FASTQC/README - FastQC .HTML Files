@@ -1,0 +1,9 @@
+This subdirectory contains all FastQC scripts for raw data and trimmed FastQ files. 
+
+To view a .html FastQC report right click on the file and select 'Copy link address'. 
+
+Then go to this website and paste the FastQC .html file URL into the search bar and press 'Preview': 
+  https://htmlpreview.github.io/?
+  
+The .html file will load in the browser.
+  
