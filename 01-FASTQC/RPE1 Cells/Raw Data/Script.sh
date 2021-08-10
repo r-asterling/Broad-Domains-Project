@@ -1,1 +1,32 @@
-rpe1 fastqc script
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load FastQC/0.11.8-Java-1.8.0_144
+
+INPUT=$1
+
+/usr/bin/time --verbose fastqc --outdir /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/01-fastqc/untrimmed /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/${INPUT}.fastq.gz
+
+#This script will perform fastqc on kang RPE1 fastq files.
+
+#Runner script:
+#sbatch 01-fastqc.sh SRR10540157
+#sbatch 01-fastqc.sh SRR10540160
+#sbatch 01-fastqc.sh SRR10540158
+#sbatch 01-fastqc.sh SRR10540161
+#sbatch 01-fastqc.sh SRR10540159
+#sbatch 01-fastqc.sh SRR10540162
+#sbatch 01-fastqc.sh SRR10540133
+#sbatch 01-fastqc.sh SRR10540134
+#sbatch 01-fastqc.sh SRR10540135
+#sbatch 01-fastqc.sh SRR10540136
+#sbatch 01-fastqc.sh SRR10540137
+#sbatch 01-fastqc.sh SRR10540138
+
+
