@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load Bowtie2/2.3.4.2-foss-2018b
+
+INPUT=$1
+OUTPUT=$2
+
+echo ${INPUT}
+echo ${OUTPUT}
+
+/usr/bin/time --verbose bowtie2 --very-sensitive -p 11 -x /nobackup/proj/jhfhmm/RHIANNON/GRCh38_RefGenome/GRCh38p12 -U /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/${INPUT}_TRIMMED.fastq.gz -S /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/03-bowtie2//GRCh38_alignments/${OUTPUT}_GRCh38.sam
+
+
+#Runner script:
+sbatch 03-bowtie2.sh SRR10540124 u2os_INPUT_R1_Interphase
+sbatch 03-bowtie2.sh SRR10540127 u2os_INPUT_R2_Interphase
+sbatch 03-bowtie2.sh SRR10540125 u2os_INPUT_R1_Prometaphase
+sbatch 03-bowtie2.sh SRR10540128 u2os_INPUT_R2_Prometaphase
+sbatch 03-bowtie2.sh SRR10540126 u2os_INPUT_R1_AnaTelo-phase
+sbatch 03-bowtie2.sh SRR10540129 u2os_INPUT_R2_AnaTelo-phase
+sbatch 03-bowtie2.sh SRR10540100 u2os_H3K4me3_R1_Interphase
+sbatch 03-bowtie2.sh SRR10540102 u2os_H3K4me3_R1_Prometaphase
+sbatch 03-bowtie2.sh SRR10540104 u2os_H3K4me3_R1_AnaTelo-phase
+sbatch 03-bowtie2.sh SRR10540101 u2os_H3K4me3_R2_Interphase
+sbatch 03-bowtie2.sh SRR10540103 u2os_H3K4me3_R2_Prometaphase
+sbatch 03-bowtie2.sh SRR10540105 u2os_H3K4me3_R2_AnaTelo-phase
+
