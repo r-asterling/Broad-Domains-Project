@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+FILENAME=$1
+
+sambamba view -h -t 11 -f bam -F “[XS] == null and not unmapped and not duplicate” /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/04.2-samTools/sorted_bam_files/${FILENAME}_sorted.bam > /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/${FILENAME}_sorted_UNIQUEREADS.bam
+sambamba index /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/${FILENAME}_sorted_UNIQUEREADS.bam
+
+#Runner script:
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R1_Interphase
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R2_Interphase
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R1_Prometaphase
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R2_Prometaphase
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R1_AnaTelo-phase
+sbatch 05-uniquereads.sh rpe1_H3K4me3_R2_AnaTelo-phase
+sbatch 05-uniquereads.sh rpe1_INPUT_R1_Interphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R1_Prometaphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R1_AnaTelo-phase
+sbatch 05-uniquereads.sh rpe1_INPUT_R2_Interphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R2_Prometaphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R2_AnaTelo-phase
+sbatch 05-uniquereads.sh rpe1_INPUT_R3_Interphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R3_Prometaphase
+sbatch 05-uniquereads.sh rpe1_INPUT_R3_AnaTelo-phase
