@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+trimmomatic SE -threads 11 -trimlog SRR10540124_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540124.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540124_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540127_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540127.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540127_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540125_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540125.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540125_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540128_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540128.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540128_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540126_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540126.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540126_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540129_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540129.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540129_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540100_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540100.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540100_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540101_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540101.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540101_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540102_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540102.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540102_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540103_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540103.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540103_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540104_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540104.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540104_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540105_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/00-raw_data/SRR10540105.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/SRR10540105_TRIMMED.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+
+

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load SAMtools/1.9-foss-2018b
+
+INPUT=$1
+
+/usr/bin/time --verbose samtools view -bSo /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/04.2-samTools/${INPUT}.bam 
+/nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/03.2-bowtie/${INPUT}.sam
+/usr/bin/time --verbose samtools sort -@ 11 -o /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/04.2-samTools/sorted_bam_files/${INPUT}_sorted.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/04.2-samTools/${INPUT}.bam
+/usr/bin/time --verbose samtools index /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/04.2-samTools/sorted_bam_files/${INPUT}_sorted.bam
+
+
+#Runner script:
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R1_Interphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R2_Interphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R1_Prometaphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R2_Prometaphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R1_AnaTelo-phase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_H3K4me3_R2_AnaTelo-phase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R1_Interphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R1_Prometaphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R1_AnaTelo-phase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R2_Interphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R2_Prometaphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R2_AnaTelo-phase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R3_Interphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R3_Prometaphase
+sbatch 04-kang_rpe1_sam_to_bam.sh rpe1_INPUT_R3_AnaTelo-phase
+
+

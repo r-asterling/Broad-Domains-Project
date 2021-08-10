@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load Bowtie2/2.3.4.2-foss-2018b
+
+INPUT=$1
+OUTPUT=$2
+
+echo ${INPUT}
+echo ${OUTPUT}
+
+/usr/bin/time --verbose bowtie2 --very-sensitive -p 11 -x /nobackup/proj/jhfhmm/RHIANNON/drosophila_m6_refgenome/dm6_RefGenome -U /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/${INPUT} -S /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/03.3-bowtie_DM6/${OUTPUT}_DM6.sam
+
+
+#Runner script:
+sbatch 03-kang_rpe1_bowtie.sh SRR10540133_trimmed.fastq.gz rpe1_H3K4me3_R1_Interphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540134_trimmed.fastq.gz rpe1_H3K4me3_R2_Interphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540135_trimmed.fastq.gz rpe1_H3K4me3_R1_Prometaphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540136_trimmed.fastq.gz rpe1_H3K4me3_R2_Prometaphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540137_trimmed.fastq.gz rpe1_H3K4me3_R1_AnaTelo-phase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540138_trimmed.fastq.gz rpe1_H3K4me3_R2_AnaTelo-phase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540157_trimmed.fastq.gz rpe1_INPUT_R1_Interphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540158_trimmed.fastq.gz rpe1_INPUT_R1_Prometaphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540159_trimmed.fastq.gz rpe1_INPUT_R1_AnaTelo-phase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540160_trimmed.fastq.gz rpe1_INPUT_R2_Interphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540161_trimmed.fastq.gz rpe1_INPUT_R2_Prometaphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540162_trimmed.fastq.gz rpe1_INPUT_R2_AnaTelo-phase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540163_trimmed.fastq.gz rpe1_INPUT_R3_Interphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540164_trimmed.fastq.gz rpe1_INPUT_R3_Prometaphase
+sbatch 03-kang_rpe1_bowtie.sh SRR10540165_trimmed.fastq.gz rpe1_INPUT_R3_AnaTelo-phase

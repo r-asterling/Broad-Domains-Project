@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load SAMtools/1.9-foss-2018b
+
+INPUT=$1
+
+/usr/bin/time --verbose samtools view -bSo /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/04-samTools/dm6/${INPUT}_DM6.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/03-bowtie2/drosophila_alignments/${INPUT}_DM6.sam
+/usr/bin/time --verbose samtools sort -@ 11 -o /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/04-samTools/dm6/sorted_bam_files/${INPUT}_sorted_DM6.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/04-samTools/dm6/${INPUT}_DM6.bam
+/usr/bin/time --verbose samtools index /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/04-samTools/dm6/sorted_bam_files/${INPUT}_sorted_DM6.bam
+
+
+#Runner script:
+sbatch 04-samTools.sh u2os_H3K4me3_R1_Interphase
+sbatch 04-samTools.sh u2os_H3K4me3_R2_Interphase
+sbatch 04-samTools.sh u2os_H3K4me3_R1_Prometaphase
+sbatch 04-samTools.sh u2os_H3K4me3_R2_Prometaphase
+sbatch 04-samTools.sh u2os_H3K4me3_R1_AnaTelo-phase
+sbatch 04-samTools.sh u2os_H3K4me3_R2_AnaTelo-phase
+sbatch 04-samTools.sh u2os_INPUT_R1_Interphase
+sbatch 04-samTools.sh u2os_INPUT_R1_Prometaphase
+sbatch 04-samTools.sh u2os_INPUT_R1_AnaTelo-phase
+sbatch 04-samTools.sh u2os_INPUT_R2_Interphase
+sbatch 04-samTools.sh u2os_INPUT_R2_Prometaphase
+sbatch 04-samTools.sh u2os_INPUT_R2_AnaTelo-phase

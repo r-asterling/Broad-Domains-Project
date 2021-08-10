@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load Bowtie2/2.3.4.2-foss-2018b
+
+INPUT=$1
+OUTPUT=$2
+
+echo ${INPUT}
+echo ${OUTPUT}
+
+/usr/bin/time --verbose bowtie2-build /nobackup/proj/jhfhmm/RHIANNON/drosophila_m6_refgenome/${INPUT} /nobackup/proj/jhfhmm/RHIANNON/drosophila_m6_refgenome/${OUTPUT}
+
+Runner script:
+sbatch build_index_dm6.sh dm6.fa dm6_RefGenome
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+trimmomatic SE -threads 11 -trimlog SRR10540133_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540133.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540133_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540134_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540134.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540134_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540135_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540135.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540135_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540136_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540136.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540136_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540137_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540137.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540137_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540138_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540138.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540138_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540157_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540157.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540157_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540158_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540158.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540158_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540159_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540159.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540159_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540160_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540160.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540160_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540161_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540161.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540161_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540162_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540162.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540162_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540163_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540163.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540163_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540164_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540164.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540164_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+trimmomatic SE -threads 11 -trimlog SRR10540165_trimlog /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/00-raw_data/SRR10540165.fastq.gz /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/SRR10540165_trimmed.fastq.gz ILLUMINACLIP:/nobackup/proj/jhfhmm/RHIANNON/adapter_files/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:35
+
+
