@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R1_AnaTelo-phase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R2_AnaTelo-phase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R1_AnaTelo-phase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R2_AnaTelo-phase_sorted_UNIQUEREADS_GRCh38.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile U2OS_AnaTelo-phase_fingerprint.png --outQualityMetrics U2OS_AnaTelo-phase_FingerprintMetrics -p 11
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R1_Interphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R2_Interphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R1_Interphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R2_Interphase_sorted_UNIQUEREADS_GRCh38.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile U2OS_Interphase_fingerprint.png --outQualityMetrics U2OS_Interphase_FingerprintMetrics -p 11
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R1_Prometaphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_H3K4me3_R2_Prometaphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R1_Prometaphase_sorted_UNIQUEREADS_GRCh38.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/u2os_INPUT_R2_Prometaphase_sorted_UNIQUEREADS_GRCh38.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile U2OS_Prometaphase_fingerprint.png --outQualityMetrics U2OS_Prometaphase_FingerprintMetrics -p 11
+
+#This script will create a plot comparing enrichment of all datasets from Kang for u2os cells aligned to GRCh38 genome
+
+#Runner script not needed as only making 1 plot from this script and all names are given here
+
+#When running need to do in terminal: sbatch SCRIPT_NAME.sh
