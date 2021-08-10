@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load SAMtools/1.9-foss-2018b
+
+CF=$1
+INPUT=$2
+
+/usr/bin/time --verbose samtools view -bs ${CF} /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/${INPUT}_sorted_UNIQUEREADS.bam > /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/049-samTools_downsample/normalized/${INPUT}_norm_unique.bam
+
+#Runner script:
+sbatch 049-samTools_downsample.sh 0.99 rpe1_INPUT_R1_Interphase
+sbatch 049-samTools_downsample.sh 1.00 rpe1_INPUT_R1_Prometaphase
+sbatch 049-samTools_downsample.sh 1.00 rpe1_INPUT_R1_AnaTelo-phase
+sbatch 049-samTools_downsample.sh 0.85 rpe1_INPUT_R2_Interphase
+sbatch 049-samTools_downsample.sh 0.80 rpe1_INPUT_R2_Prometaphase
+sbatch 049-samTools_downsample.sh 0.70 rpe1_INPUT_R2_AnaTelo-phase
+sbatch 049-samTools_downsample.sh 0.76 rpe1_H3K4me3_R1_Interphase
+sbatch 049-samTools_downsample.sh 0.65 rpe1_H3K4me3_R2_Interphase
+sbatch 049-samTools_downsample.sh 0.48 rpe1_H3K4me3_R1_Prometaphase
+sbatch 049-samTools_downsample.sh 0.69 rpe1_H3K4me3_R2_Prometaphase
+sbatch 049-samTools_downsample.sh 1.00 rpe1_H3K4me3_R1_AnaTelo-phase
+sbatch 049-samTools_downsample.sh 1.00 rpe1_H3K4me3_R2_AnaTelo-phase
