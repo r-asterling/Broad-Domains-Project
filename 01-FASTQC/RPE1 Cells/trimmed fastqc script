@@ -11,7 +11,7 @@ module load FastQC/0.11.8-Java-1.8.0_144
 
 INPUT=$1
 
-/usr/bin/time --verbose fastqc --outdir /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/01-fastqc/trimmed /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/${INPUT}.fastq.gz
+/usr/bin/time --verbose fastqc --outdir /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/01-fastqc/trimmed /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/02-trimmomatic/${INPUT}_trimmed.fastq.gz
 
 #This script will perform fastqc on kang RPE1 fastq files.
 
