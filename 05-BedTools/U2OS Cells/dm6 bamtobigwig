@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+FILENAME=$1
+genomeCoverageBed -bg -ibam /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/dm6/${FILENAME}_sorted_UNIQUEREADS_DM6.bam -g /nobackup/proj/jhfhmm/RHIANNON/drosophila_m6_refgenome/refGene > /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/bedgraph_files/${FILENAME}_DM6.bedgraph
+bedSort /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/bedgraph_files/${FILENAME}_DM6.bedgraph /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/bedgraph_files/${FILENAME}_SORTED_DM6.bedgraph
+bedGraphToBigWig /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/bedgraph_files/${FILENAME}_SORTED_DM6.bedgraph /nobackup/proj/jhfhmm/RHIANNON/drosophila_m6_refgenome/refGene /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/${FILENAME}_DM6.bigwig
+rm /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/06-bamToBigWig/dm6/bedgraph_files/${FILENAME}_DM6.bedgraph
+Runner Script 
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R1_Interphase
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R2_Interphase
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R1_Prometaphase
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R2_Prometaphase
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R1_AnaTelo-phase
+sbatch 06-bamToBigWig.sh u2os_H3K4me3_R2_AnaTelo-phase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R1_Interphase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R1_Prometaphase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R1_AnaTelo-phase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R2_Interphase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R2_Prometaphase
+sbatch 06-bamToBigWig.sh u2os_INPUT_R2_AnaTelo-phase
+
+
