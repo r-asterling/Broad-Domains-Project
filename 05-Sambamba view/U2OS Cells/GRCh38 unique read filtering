@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+FILENAME=$1
+
+sambamba view -h -t 11 -f bam -F “[XS] == null and not unmapped and not duplicate” /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/04-samTools/grch38/sorted_bam_files/${FILENAME}_sorted_GRCh38.bam > /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/${FILENAME}_sorted_UNIQUEREADS_GRCh38.bam
+sambamba index /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/05-uniquereads/grch38/${FILENAME}_sorted_UNIQUEREADS_GRCh38.bam
+
+#Runner script:
+sbatch 05-uniquereads.sh u2os_H3K4me3_R1_Interphase
+sbatch 05-uniquereads.sh u2os_H3K4me3_R2_Interphase
+sbatch 05-uniquereads.sh u2os_H3K4me3_R1_Prometaphase
+sbatch 05-uniquereads.sh u2os_H3K4me3_R2_Prometaphase
+sbatch 05-uniquereads.sh u2os_H3K4me3_R1_AnaTelo-phase
+sbatch 05-uniquereads.sh u2os_H3K4me3_R2_AnaTelo-phase
+sbatch 05-uniquereads.sh u2os_INPUT_R1_Interphase
+sbatch 05-uniquereads.sh u2os_INPUT_R1_Prometaphase
+sbatch 05-uniquereads.sh u2os_INPUT_R1_AnaTelo-phase
+sbatch 05-uniquereads.sh u2os_INPUT_R2_Interphase
+sbatch 05-uniquereads.sh u2os_INPUT_R2_Prometaphase
+sbatch 05-uniquereads.sh u2os_INPUT_R2_AnaTelo-phase
+
