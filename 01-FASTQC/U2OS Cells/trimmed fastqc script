@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load FastQC/0.11.8-Java-1.8.0_144
+
+INPUT=$1
+
+/usr/bin/time --verbose fastqc --outdir /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/01-fastqc/trimmed /nobackup/proj/jhfhmm/RHIANNON/kang_data/u2os/02-trimmomatic/${INPUT}.fastq.gz
+
+#This script will perform fastqc on kang u2os fastq files.
+
+#Runner script:
+#sbatch 01-fastqc.sh SRR10540124
+#sbatch 01-fastqc.sh SRR10540127
+#sbatch 01-fastqc.sh SRR10540125
+#sbatch 01-fastqc.sh SRR10540128
+#sbatch 01-fastqc.sh SRR10540126
+#sbatch 01-fastqc.sh SRR10540129
+#sbatch 01-fastqc.sh SRR10540100
+#sbatch 01-fastqc.sh SRR10540101
+#sbatch 01-fastqc.sh SRR10540102
+#sbatch 01-fastqc.sh SRR10540103
+#sbatch 01-fastqc.sh SRR10540104
+#sbatch 01-fastqc.sh SRR10540105
