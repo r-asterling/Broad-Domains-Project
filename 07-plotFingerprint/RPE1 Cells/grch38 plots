@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R1_AnaTelo-phase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R2_AnaTelo-phase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R1_AnaTelo-phase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R2_AnaTelo-phase_sorted_UNIQUEREADS.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile RPE1_AnaTelo-phase_fingerprint.png --outQualityMetrics RPE1_AnaTelo-phase_FingerprintMetrics -p 11
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R1_Interphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R2_Interphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R1_Interphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R2_Interphase_sorted_UNIQUEREADS.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile RPE1_Interphase_fingerprint.png --outQualityMetrics RPE1_Interphase_FingerprintMetrics -p 11
+plotFingerprint -b /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R1_Prometaphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_H3K4me3_R2_Prometaphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R1_Prometaphase_sorted_UNIQUEREADS.bam /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/05-uniquereads_sambamba/rpe1_INPUT_R2_Prometaphase_sorted_UNIQUEREADS.bam --labels  H3K4me3_R1 H3K4me3_R2 Input_R1 Input_R2 --plotFile RPE1_Prometaphase_fingerprint.png --outQualityMetrics RPE1_Prometaphase_FingerprintMetrics -p 11
+
+#This script will create a plot comparing enrichment of all datasets from Kang for rpe1 cells 
+
+#Runner script not needed as only making 1 plot from this script and all names are given here
+
+#When running need to do in terminal: sbatch SCRIPT_NAME.sh
