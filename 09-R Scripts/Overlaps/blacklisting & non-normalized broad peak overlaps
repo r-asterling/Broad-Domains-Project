@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(GenomicRanges)
 library(plyranges)
 library(dplyr)
-
+library(readr)
+library(R.utils)
 ```
 
 Load reference genome and ready for overlap:
@@ -50,15 +51,40 @@ U2OS_H3K4me3_R2_AnaTelophase$startME3AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophas
 U2OS_H3K4me3_R2_AnaTelophase$endME3AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophase$endK4
 U2OS_H3K4me3_R2_AnaTelophase$chromosome<- paste0( 'chr',U2OS_H3K4me3_R2_AnaTelophase$chromosome)
 U2OS_H3K4me3_R2_AnaTelophase$widthBD <- U2OS_H3K4me3_R2_AnaTelophase$endME3AnaTelophase - U2OS_H3K4me3_R2_AnaTelophase$startME3AnaTelophase
-Top_5percent_BD <- function( input_variable){
-  n <- 5 #top 5%
-  input_variable           <- input_variable[input_variable$widthBD > quantile(input_variable$widthBD,prob=1-n/100),]}
+#Top_5percent_BD <- function( input_variable){
+  #n <- 5 #top 5%
+  #input_variable           <- input_variable[input_variable$widthBD > quantile(input_variable$widthBD,prob=1-n/100),]}
 
 #U2OS_H3K4me3_R2_AnaTelophase <- Top_5percent_BD(U2OS_H3K4me3_R2_AnaTelophase)
 
 U2OS_H3K4me3_R2_AnaTelophase_GR <- makeGRangesFromDataFrame(U2OS_H3K4me3_R2_AnaTelophase, keep.extra.columns = T, ignore.strand = T, seqnames.field = "chromosome", start.field = "startK4", end.field = "endK4")
 overlaps <- plyranges::join_overlap_inner(Genes_GR, U2OS_H3K4me3_R2_AnaTelophase_GR)
+
+
+#Remove blacklist regions: 
+blacklist <- read.table(file = "/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/blacklist genes/ENCFF001TDO.bed.gz", header = T, sep = "\t")
+colnames(blacklist) = c("chrom", "init", "end", "reason", "col5", "col6")
+
+U2OS_H3K4me3_R2_AnaTelophase$excluded = NA
+for (i in 1:nrow(U2OS_H3K4me3_R2_AnaTelophase)) {
+	if (i %% 100 == 0) print(paste0(i, "/", nrow(U2OS_H3K4me3_R2_AnaTelophase)))
+	bExcluded = 0
+	for(j in 1:nrow(blacklist)) {
+	    	if (U2OS_H3K4me3_R2_AnaTelophase$chromosome[i] == blacklist$chrom[j] & U2OS_H3K4me3_R2_AnaTelophase$startK4[i] < blacklist$end[j] & U2OS_H3K4me3_R2_AnaTelophase$endK4[i] > blacklist$init[j]) {
+			  bExcluded = 1
+			  break
+			  }
+		  }
+	  U2OS_H3K4me3_R2_AnaTelophase$excluded[i] = bExcluded
+	  }
+
+sum(U2OS_H3K4me3_R2_AnaTelophase$excluded)
+
+U2OS_H3K4me3_R2_AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophase[U2OS_H3K4me3_R2_AnaTelophase$excluded !=1,]
+View(U2OS_H3K4me3_R2_AnaTelophase)
+
 ```
+
 Find overlaps of individual peaks and % coverage on the gene: 
 ```{r}
 # Function to find overlaps of individual H3K4me3 peaks and % coverage on the gene and join them in a data frame
@@ -100,10 +126,13 @@ TEST <- U2OS_R2_OG_H3K4me3_AnaTelophase  %>%
 #Sum all H3K4me3 percentages by ID 
 U2OS_R2_OG_H3K4me3_AnaTelophase1 <- aggregate(x = U2OS_R2_OG_H3K4me3_AnaTelophase_all$percentageOverlap,  FUN = sum, by = list(U2OS_R2_OG_H3K4me3_AnaTelophase_all$Gene.stable.ID))
 #U2OS_R2_OG_H3K4me3_AnaTelophase1 <-   U2OS_R2_OG_H3K4me3_AnaTelophase1 %>% arrange(Group.1)
+#U2OS_R2_OG_H3K4me3_AnaTelophase1 <- na.omit(U2OS_R2_OG_H3K4me3_AnaTelophase1)
+
 U2OS_R2_OG_H3K4me3_AnaTelophase1[is.na(U2OS_R2_OG_H3K4me3_AnaTelophase1)] <- 0
+
 View(U2OS_R2_OG_H3K4me3_AnaTelophase1)
 
-write.csv(x = U2OS_R2_OG_H3K4me3_AnaTelophase1, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/All Genes/U2OS_R2_H3K4me3_AnaTelophase.csv")
+write.csv(x = U2OS_R2_OG_H3K4me3_AnaTelophase1, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R2_H3K4me3_AnaTelophase.csv")
 
 ```
 
