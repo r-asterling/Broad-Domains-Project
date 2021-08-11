@@ -186,10 +186,3 @@ png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/
 U2OSR1plot_AnaTelophase_vs_GeneSize <- plot(full_U2OS_K4me3_avonly$Gene_size, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), ylab = "Anaphase/Telophase (%)", xlab = "Gene Size (kb)")
 dev.off()
 ```
-
-Principle Component Analysis Preparation: 
-```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-#Preparing for PCA analysis: 
-prcomp_df <- read.table("~/MRES/Project/Studies & Data/Mitotic/R scripts/prcomp.txt")
-colnames(prcomp_df)<-c("Replicate", "Phase", "Sample Name")
-```
