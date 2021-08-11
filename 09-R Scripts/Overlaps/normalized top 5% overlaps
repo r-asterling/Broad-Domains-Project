@@ -1,5 +1,5 @@
 ---
-title: "Rhiannon_script"
+title: "script"
 author: "Dan K"
 date: "28/04/2021"
 output:
@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(GenomicRanges)
 library(plyranges)
 library(dplyr)
-
+library(readr)
+library(R.utils)
 ```
 
 Load reference genome and ready for overlap:
@@ -43,24 +44,52 @@ Check column names and make ready for percentage split:
 ```{r}
 
 # H3K4me3 split over genes ####### 
-RPE1_H3K4me3_R2_AnaTelophase <- read.table(file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/RPE1 Cells/09 - MACS2 Peak Calling/Normalised peak calling/Normalised broadpeak files/broad peak files/rpe1_h3k4me3_R2_AnaTelophase_broad_norm_peaks.broadPeak", header = T, sep = "\t")
-RPE1_H3K4me3_R2_AnaTelophase <- tibble::rowid_to_column( RPE1_H3K4me3_R2_AnaTelophase, "ID")
-colnames(RPE1_H3K4me3_R2_AnaTelophase) <-  c("ID", "chromosome", "startK4", "endK4", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue")
-RPE1_H3K4me3_R2_AnaTelophase$startME3AnaTelophase <- RPE1_H3K4me3_R2_AnaTelophase$startK4
-RPE1_H3K4me3_R2_AnaTelophase$endME3AnaTelophase <- RPE1_H3K4me3_R2_AnaTelophase$endK4
-RPE1_H3K4me3_R2_AnaTelophase$chromosome<- paste0( 'chr',RPE1_H3K4me3_R2_AnaTelophase$chromosome)
-RPE1_H3K4me3_R2_AnaTelophase$widthBD <- RPE1_H3K4me3_R2_AnaTelophase$endME3AnaTelophase - RPE1_H3K4me3_R2_AnaTelophase$startME3AnaTelophase
+U2OS_H3K4me3_R2_AnaTelophase <- read.table(file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/U2OS/results files/08-peak-calls/normalised/broad peak files/u2os_h3k4me3_R2_AnaTelophase_broad_norm_peaks.broadPeak", header = T, sep = "\t")
+U2OS_H3K4me3_R2_AnaTelophase <- tibble::rowid_to_column( U2OS_H3K4me3_R2_AnaTelophase, "ID")
+colnames(U2OS_H3K4me3_R2_AnaTelophase) <-  c("ID", "chromosome", "startK4", "endK4", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue")
+U2OS_H3K4me3_R2_AnaTelophase$startME3AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophase$startK4
+U2OS_H3K4me3_R2_AnaTelophase$endME3AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophase$endK4
+U2OS_H3K4me3_R2_AnaTelophase$chromosome<- paste0( 'chr',U2OS_H3K4me3_R2_AnaTelophase$chromosome)
+U2OS_H3K4me3_R2_AnaTelophase$widthBD <- U2OS_H3K4me3_R2_AnaTelophase$endME3AnaTelophase - U2OS_H3K4me3_R2_AnaTelophase$startME3AnaTelophase
+
+U2OS_H3K4me3_R2_AnaTelophase_GR <- makeGRangesFromDataFrame(U2OS_H3K4me3_R2_AnaTelophase, keep.extra.columns = T, ignore.strand = T, seqnames.field = "chromosome", start.field = "startK4", end.field = "endK4")
+overlaps <- plyranges::join_overlap_inner(Genes_GR, U2OS_H3K4me3_R2_AnaTelophase_GR)
+
+
+#Remove blacklist regions: 
+blacklist <- read.table(file = "/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/blacklist genes/ENCFF001TDO.bed.gz", header = T, sep = "\t")
+colnames(blacklist) = c("chrom", "init", "end", "reason", "col5", "col6")
+
+U2OS_H3K4me3_R2_AnaTelophase$excluded = NA
+for (i in 1:nrow(U2OS_H3K4me3_R2_AnaTelophase)) {
+	if (i %% 100 == 0) print(paste0(i, "/", nrow(U2OS_H3K4me3_R2_AnaTelophase)))
+	bExcluded = 0
+	for(j in 1:nrow(blacklist)) {
+	    	if (U2OS_H3K4me3_R2_AnaTelophase$chromosome[i] == blacklist$chrom[j] & U2OS_H3K4me3_R2_AnaTelophase$startK4[i] < blacklist$end[j] & U2OS_H3K4me3_R2_AnaTelophase$endK4[i] > blacklist$init[j]) {
+			  bExcluded = 1
+			  break
+			  }
+		  }
+	  U2OS_H3K4me3_R2_AnaTelophase$excluded[i] = bExcluded
+	  }
+
+sum(U2OS_H3K4me3_R2_AnaTelophase$excluded)
+
+write.csv(x = U2OS_H3K4me3_R2_AnaTelophase, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Normalised/Blacklisted Top 5%/Excluded_R2_H3K4me3_AnaTelophase.csv")
+
+U2OS_H3K4me3_R2_AnaTelophase <- U2OS_H3K4me3_R2_AnaTelophase[U2OS_H3K4me3_R2_AnaTelophase$excluded !=1,]
+View(U2OS_H3K4me3_R2_AnaTelophase)
+
+
+
+
 Top_5percent_BD <- function( input_variable){
   n <- 5 #top 5%
   input_variable           <- input_variable[input_variable$widthBD > quantile(input_variable$widthBD,prob=1-n/100),]}
 
-RPE1_H3K4me3_R2_AnaTelophase <- Top_5percent_BD(RPE1_H3K4me3_R2_AnaTelophase)
+U2OS_H3K4me3_R2_AnaTelophase_5 <- Top_5percent_BD(U2OS_H3K4me3_R2_AnaTelophase)
 
-RPE1_H3K4me3_R2_AnaTelophase_GR <- makeGRangesFromDataFrame(RPE1_H3K4me3_R2_AnaTelophase, keep.extra.columns = T, ignore.strand = T, seqnames.field = "chromosome", start.field = "startK4", end.field = "endK4")
-overlaps <- plyranges::join_overlap_inner(Genes_GR, RPE1_H3K4me3_R2_AnaTelophase_GR)
-```
-Find overlaps of individual peaks and % coverage on the gene: 
-```{r}
+#Find overlaps of individual peaks and % coverage on the gene: 
 # Function to find overlaps of individual H3K4me3 peaks and % coverage on the gene and join them in a data frame
 MetaMerge <- function( Gene, H3K4me3) {
   
@@ -84,13 +113,13 @@ MetaMerge <- function( Gene, H3K4me3) {
   return( df)
 }
 
-RPE1_R2_OG_H3K4me3_AnaTelophase <- MetaMerge(Gene = Genes, H3K4me3 = RPE1_H3K4me3_R2_AnaTelophase)
-RPE1_R2_OG_H3K4me3_AnaTelophase_all <- merge(Genes, RPE1_R2_OG_H3K4me3_AnaTelophase, by = "Gene.stable.ID", all.x = TRUE)
+U2OS_R2_OG_H3K4me3_AnaTelophase <- MetaMerge(Gene = Genes, H3K4me3 = U2OS_H3K4me3_R2_AnaTelophase_5)
+U2OS_R2_OG_H3K4me3_AnaTelophase_all <- merge(Genes, U2OS_R2_OG_H3K4me3_AnaTelophase, by = "Gene.stable.ID", all.x = TRUE)
 
-#RPE1_R2_OG_H3K4me3_AnaTelophase_hist <- hist(RPE1_R2_OG_H3K4me3_AnaTelophase$percentageOverlap, main = "RPE1 AnaTelophase Replicate 1", xlab = "Broad Domain Percentage Overlap")
-head(RPE1_R2_OG_H3K4me3_AnaTelophase %>% arrange(percentageOverlap))
+#U2OS_R2_OG_H3K4me3_AnaTelophase_hist <- hist(U2OS_R2_OG_H3K4me3_AnaTelophase$percentageOverlap, main = "U2OS AnaTelophase Replicate 1", xlab = "Broad Domain Percentage Overlap")
+head(U2OS_R2_OG_H3K4me3_AnaTelophase %>% arrange(percentageOverlap))
 
-TEST <- RPE1_R2_OG_H3K4me3_AnaTelophase  %>% 
+TEST <- U2OS_R2_OG_H3K4me3_AnaTelophase  %>% 
                                              group_by(Gene.stable.ID) %>% 
                                              summarise(num=n(), totalH3 = sum(percentageOverlap), Gene.size = sum(width), Broad.domain.width  
                                              = sum(widthBD))
@@ -98,28 +127,29 @@ TEST <- RPE1_R2_OG_H3K4me3_AnaTelophase  %>%
 
 
 #Sum all H3K4me3 percentages by ID 
-RPE1_R2_OG_H3K4me3_AnaTelophase1 <- aggregate(x = RPE1_R2_OG_H3K4me3_AnaTelophase_all$percentageOverlap,  FUN = sum, by = list(RPE1_R2_OG_H3K4me3_AnaTelophase_all$Gene.stable.ID))
-#RPE1_R2_OG_H3K4me3_AnaTelophase1 <-   RPE1_R2_OG_H3K4me3_AnaTelophase1 %>% arrange(Group.1)
+U2OS_R2_OG_H3K4me3_AnaTelophase1 <- aggregate(x = U2OS_R2_OG_H3K4me3_AnaTelophase_all$percentageOverlap,  FUN = sum, by = list(U2OS_R2_OG_H3K4me3_AnaTelophase_all$Gene.stable.ID))
+#U2OS_R2_OG_H3K4me3_AnaTelophase1 <-   U2OS_R2_OG_H3K4me3_AnaTelophase1 %>% arrange(Group.1)
+#U2OS_R2_OG_H3K4me3_AnaTelophase1 <- na.omit(U2OS_R2_OG_H3K4me3_AnaTelophase1)
 
-RPE1_R2_OG_H3K4me3_AnaTelophase1[is.na(RPE1_R2_OG_H3K4me3_AnaTelophase1)] <- 0
+U2OS_R2_OG_H3K4me3_AnaTelophase1[is.na(U2OS_R2_OG_H3K4me3_AnaTelophase1)] <- 0
 
-View(RPE1_R2_OG_H3K4me3_AnaTelophase1)
+View(U2OS_R2_OG_H3K4me3_AnaTelophase1)
 
-write.csv(x = RPE1_R2_OG_H3K4me3_AnaTelophase1, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/RPE1/Normalised/Top 5%/norm_RPE1_R2_H3K4me3_AnaTelophase.csv")
+write.csv(x = U2OS_R2_OG_H3K4me3_AnaTelophase1, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Normalised/Blacklisted Top 5%/U2OS_R2_H3K4me3_AnaTelophase.csv")
 
 ```
 
 ```{r}
 
-#filter original RPE1_R2_OG_H3K4me3_AnaTelophase df (with total %) per row  
-#RPE1_R2_OG_H3K4me3_AnaTelophase2 <- data.frame(RPE1_R2_OG_H3K4me3_AnaTelophase %>% 
+#filter original U2OS_R2_OG_H3K4me3_AnaTelophase df (with total %) per row  
+#U2OS_R2_OG_H3K4me3_AnaTelophase2 <- data.frame(U2OS_R2_OG_H3K4me3_AnaTelophase %>% 
   #group_by(Gene.stable.ID) %>% 
   #distinct(Gene.stable.ID,.keep_all = TRUE) %>% 
   #arrange(Gene.stable.ID))
 
 # combine the unique rows and add the total % per gene 
-#RPE1_R2_OG_H3K4me3_AnaTelophase <- cbind(RPE1_R2_OG_H3K4me3_AnaTelophase2, RPE1_R2_OG_H3K4me3_AnaTelophase1) # x is the total % overlap of H3K4me3 for that gene 
-#colnames(RPE1_R2_OG_H3K4me3_AnaTelophase2) #add these to the below
-#colnames(RPE1_R2_OG_H3K4me3_AnaTelophase) <- c("seqname", "start", "end", "width", "strand", "Gene.stable.ID", "Gene.name", "Strand.x", "Transcription.start.site..TSS.", "P.value", "ID", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue", "startME3AnaTelophase", "endME3AnaTelophase", "percentageOverlap_old", "Old_gene_ID", "percentageOverlap") # insert RPE1_R2_OG_H3K4me3_AnaTelophase column names
+#U2OS_R2_OG_H3K4me3_AnaTelophase <- cbind(U2OS_R2_OG_H3K4me3_AnaTelophase2, U2OS_R2_OG_H3K4me3_AnaTelophase1) # x is the total % overlap of H3K4me3 for that gene 
+#colnames(U2OS_R2_OG_H3K4me3_AnaTelophase2) #add these to the below
+#colnames(U2OS_R2_OG_H3K4me3_AnaTelophase) <- c("seqname", "start", "end", "width", "strand", "Gene.stable.ID", "Gene.name", "Strand.x", "Transcription.start.site..TSS.", "P.value", "ID", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue", "startME3AnaTelophase", "endME3AnaTelophase", "percentageOverlap_old", "Old_gene_ID", "percentageOverlap") # insert U2OS_R2_OG_H3K4me3_AnaTelophase column names
 
 ```
