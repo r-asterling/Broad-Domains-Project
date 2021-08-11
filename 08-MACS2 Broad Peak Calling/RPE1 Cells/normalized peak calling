@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#SBATCH --account jhfhmm
+#SBATCH --time 0-12:00:00
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task 11
+#SBATCH --ntasks 1
+#SBATCH --nodes 1
+
+module load  MACS2/2.1.1.20160309-goolf-1.7.20gcc493-Python-2.7.11
+
+CHIP=$1
+CONTROL=$2
+OUTPUT=$3
+
+#broad peaks:
+macs2 callpeak -t /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/049-samTools_downsample/normalized/${CHIP}_norm_unique.bam -c /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/049-samTools_downsample/normalized/${CONTROL}_norm_unique.bam --outdir /nobackup/proj/jhfhmm/RHIANNON/kang_data/rpe1/06.2-peak_calls_unique/normalized --broad -f BAM -n ${OUTPUT}_broad
+
+#This script will use MACS2 to call broad domains within normalized Kang RPE1 data 
+#Runner script: 
+#sbatch 06-peak_calls.sh CHIP CONTROL OUTPUT
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R1_Interphase rpe1_INPUT_R1_Interphase rpe1_h3k4me3_R1_Interphase
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R2_Interphase rpe1_INPUT_R2_Interphase rpe1_h3k4me3_R2_Interphase
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R1_Prometaphase rpe1_INPUT_R1_Prometaphase rpe1_h3k4me3_R1_Prometaphase 
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R2_Prometaphase rpe1_INPUT_R2_Prometaphase rpe1_h3k4me3_R2_Prometaphase 
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R1_AnaTelo-phase rpe1_INPUT_R1_AnaTelo-phase rpe1_h3k4me3_R1_AnaTelo-phase
+#sbatch 06-peak_calls.sh rpe1_H3K4me3_R2_AnaTelo-phase rpe1_INPUT_R2_AnaTelo-phase rpe1_h3k4me3_R2_AnaTelo-phase
+
+
+
+
