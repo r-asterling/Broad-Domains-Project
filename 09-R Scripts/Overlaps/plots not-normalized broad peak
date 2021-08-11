@@ -1,0 +1,195 @@
+---
+title: "Merging Matrices Script"
+author: "Rhiannon & Juliana"
+date: "23/06/2021"
+output:
+  word_document: default
+  html_document: default
+---
+Making plots of Percentage overlap across cell cycle phases
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Installations and library loading:
+```{r echo=TRUE}
+library("readr")
+library("devtools")
+library("remotes")
+#remotes::install_github("drmjc/excelIO")
+#remotes::install_github("drmjc/mjcbase")
+library(excelIO)
+library(mjcbase)
+#install.packages("tidyverse")
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+Importing excel files generated from previous script 
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+U2OSR1_K4me3_Interphase<- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R1_H3K4me3_Interphase.csv")
+U2OSR1_K4me3_Prometaphase<- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R1_H3K4me3_Prometaphase.csv")
+U2OSR1_K4me3_AnaTelophase <- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R1_H3K4me3_AnaTelophase.csv")
+U2OSR2_K4me3_Interphase<- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R2_H3K4me3_Interphase.csv")
+U2OSR2_K4me3_Prometaphase<- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R2_H3K4me3_Prometaphase.csv")
+U2OSR2_K4me3_AnaTelophase<- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/U2OS_R2_H3K4me3_AnaTelophase.csv")
+
+gene_sizes <- read_csv("~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Reference Genome/Genes Size Table.csv")
+
+
+colnames(U2OSR2_K4me3_AnaTelophase)
+View(gene_sizes)
+```
+
+Making files all same length by finding genes that are different in each condition (didn't use this in the end, used cbind):
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#U2OSR2_K4me3_AnaTelophase["Gene.stable.ID"]!=U2OSR1_K4me3_Prometaphase["Gene.stable.ID"]
+#dim(U2OSR1_K4me3_AnaTelophase["Gene.stable.ID"])
+#dim(U2OSR1_K4me3_Prometaphase["Gene.stable.ID"])
+
+#'%notin%'<-Negate('%in%')
+
+#U2OSR1_K4me3_Interphase[U2OSR1_K4me3_Interphase["Gene.stable.ID"] %notin% U2OSR1_K4me3_Prometaphase["Gene.stable.ID"]]
+
+#U2OSR1_K4me3_AnaTelophase[U2OSR1_K4me3_AnaTelophase["Gene.stable.ID"] %notin% U2OSR1_K4me3_Prometaphase["Gene.stable.ID"]]
+#View(U2OSR1_K4me3_Interphase)
+
+
+U2OSR1_K4me3_Interphase_over<-U2OSR1_K4me3_Interphase %>% select(x)
+rownames(U2OSR1_K4me3_Interphase_over)<-U2OSR1_K4me3_Interphase$Group.1
+
+U2OSR1_K4me3_Prometaphase_over<-U2OSR1_K4me3_Prometaphase %>% select(x)
+rownames(U2OSR1_K4me3_Prometaphase_over)<-U2OSR1_K4me3_Prometaphase$Group.1
+
+U2OSR1_K4me3_AnaTelophase_over<-U2OSR1_K4me3_AnaTelophase %>% select(x)
+rownames(U2OSR1_K4me3_AnaTelophase_over)<-U2OSR1_K4me3_AnaTelophase$Group.1
+
+U2OSR2_K4me3_Interphase_over<-U2OSR2_K4me3_Interphase %>% select(x)
+rownames(U2OSR2_K4me3_Interphase_over)<-U2OSR2_K4me3_Interphase$Group.1
+
+U2OSR2_K4me3_Prometaphase_over<-U2OSR2_K4me3_Prometaphase %>% select(x)
+rownames(U2OSR2_K4me3_Prometaphase_over)<-U2OSR2_K4me3_Prometaphase$Group.1
+
+U2OSR2_K4me3_AnaTelophase_over<-U2OSR2_K4me3_AnaTelophase %>% select(x)
+rownames(U2OSR2_K4me3_AnaTelophase_over)<-U2OSR2_K4me3_AnaTelophase$Group.1
+View(U2OSR2_K4me3_AnaTelophase_over)
+
+Gene_size <- gene_sizes %>% select(Genes_df.width)
+rownames(Gene_size) <- gene_sizes$Genes_df.Gene.stable.ID
+View(Gene_size)
+```
+
+Merging all cell cycle phase data into one matrix using cbind which finds those missing and assigns NA: 
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+full_U2OS_K4me3 <- cbind.smart(Gene_size, U2OSR1_K4me3_Interphase_over, U2OSR2_K4me3_Interphase_over, U2OSR1_K4me3_Prometaphase_over, U2OSR2_K4me3_Prometaphase_over, U2OSR1_K4me3_AnaTelophase_over, U2OSR2_K4me3_AnaTelophase_over, sort.col = NULL)
+colnames(full_U2OS_K4me3)<-c("Gene_size", "U2OSR1_K4me3_Interphase", "U2OSR2_K4me3_Interphase", "U2OSR1_K4me3_Prometaphase", "U2OSR2_K4me3_Prometaphase", "U2OSR1_K4me3_AnaTelophase", "U2OSR2_K4me3_AnaTelophase")
+
+full_U2OS_K4me32 <- full_U2OS_K4me3[!(full_U2OS_K4me3[,2]==0 & full_U2OS_K4me3[,3]==1),]
+full_U2OS_K4me32 <- full_U2OS_K4me32[!(full_U2OS_K4me32[,3]==0 & full_U2OS_K4me32[,2]==1),]
+full_U2OS_K4me32 <- full_U2OS_K4me32[!(full_U2OS_K4me32[,4]==0 & full_U2OS_K4me32[,5]==1),]
+full_U2OS_K4me32 <- full_U2OS_K4me32[!(full_U2OS_K4me32[,5]==0 & full_U2OS_K4me32[,4]==1),]
+full_U2OS_K4me32 <- full_U2OS_K4me32[!(full_U2OS_K4me32[,6]==0 & full_U2OS_K4me32[,7]==1),]
+full_U2OS_K4me32 <- full_U2OS_K4me32[!(full_U2OS_K4me32[,7]==0 & full_U2OS_K4me32[,6]==1),]
+
+view(full_U2OS_K4me32)
+dim(full_U2OS_K4me32)
+```
+
+Making averages using each biological replicate:
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#averaging: 
+full_U2OS_K4me3_sum <- mutate(full_U2OS_K4me32, Gene_size, U2OS_K4me3_Interphase_sum = U2OSR1_K4me3_Interphase+U2OSR1_K4me3_Interphase, U2OS_K4me3_Prometaphase_sum = U2OSR1_K4me3_Prometaphase+U2OSR2_K4me3_Prometaphase, U2OS_K4me3_AnaTelophase_sum = U2OSR1_K4me3_AnaTelophase+U2OSR2_K4me3_AnaTelophase)
+
+full_U2OS_K4me3_av <- mutate(full_U2OS_K4me3_sum, Gene_size, U2OS_K4me3_Interphase_av = U2OS_K4me3_Interphase_sum/2, U2OS_K4me3_Prometaphase_av = U2OS_K4me3_Prometaphase_sum/2, U2OS_K4me3_AnaTelophase_av = U2OS_K4me3_AnaTelophase_sum/2)
+
+full_U2OS_K4me3_avonly <- data.frame(full_U2OS_K4me3_av$Gene_size, full_U2OS_K4me3_av$U2OS_K4me3_Interphase_av, full_U2OS_K4me3_av$U2OS_K4me3_Prometaphase_av, full_U2OS_K4me3_av$U2OS_K4me3_AnaTelophase_av)
+
+names <- rownames(full_U2OS_K4me32)
+rownames(full_U2OS_K4me3_avonly) <- names
+colnames(full_U2OS_K4me3_avonly) <- c("Gene_size", "U2OS_K4me3_Interphase_av", "U2OS_K4me3_Prometaphase_av", "U2OS_K4me3_AnaTelophase_av")
+View(full_U2OS_K4me3_avonly)
+```
+
+Finding mean percentage overlap and SD
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+stats_full_U2OS_K4me3 <- data.frame(colMeans(full_U2OS_K4me3), colSD(full_U2OS_K4me3))
+write.csv(x = stats_full_U2OS_K4me3, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/Means_and_SD2.csv")
+
+stats_full_U2OS_K4me3_av <- data.frame(colMeans(full_U2OS_K4me3_avonly), colSD(full_U2OS_K4me3_avonly))
+write.csv(x = stats_full_U2OS_K4me3_av, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Blacklisted All Genes/Means_and_SD_av2.csv")
+
+View(stats_full_U2OS_K4me3)
+
+```
+
+Saving matrices/tables:
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+#Save as R object:
+save(full_U2OS_K4me3, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/R Matrices/Non normalized all genes/Blacklisted_U2OS_All_Replicates2.RData")
+save(full_U2OS_K4me3_avonly, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/R Matrices/Non normalized all genes/Blacklisted_U2OS_averages2.RData")
+```
+
+Making plots:
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#plots:
+linear <- lm(full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av ~ full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av)
+linear
+linear <- lm(full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av ~ full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av)
+linear
+linear <- lm(full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av ~ full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av)
+linear
+
+#Inter vs Prometa:
+png(U2OS_Interphase_vs_Prometaphase, file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Inter vs prometa Diagonal.png", width=600, height=600, units = "px")
+U2OS_Interphase_vs_Prometaphase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av, col = rgb(red = 0.3, green = 0, blue = 0.7, alpha = 0.2), xlab = "Interphase (%)", ylab = "Prometaphase (%)", abline(0.003895, 0.914856))
+dev.off()
+
+#Inter vs AnaTelo:
+png(U2OS_Interphase_vs_AnaTelophase, file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Inter vs AnaTelo Diagonal.png", width=600, height=600, units = "px")
+U2OS_Interphase_vs_AnaTelophase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.5, green = 0, blue = 0.5, alpha = 0.2), xlab = "Interphase (%)", ylab = "Anaphase/Telophase (%)", abline(0.009633, 1.034778))
+dev.off()
+
+#Prometa vs AnaTelo:
+png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Prometa vs AnaTelo Diagonal.png", width=600, height=600, units = "px")
+U2OS_Prometaphase_vs_AnaTelophase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), xlab = "Prometaphase (%)", ylab = "Anaphase/Telophase (%)", abline(0.00608, 1.11574))
+dev.off()
+
+#Inter vs Prometa:
+png(U2OS_Interphase_vs_Prometaphase, file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Inter vs prometa.png", width=600, height=600, units = "px")
+U2OS_Interphase_vs_Prometaphase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av, col = rgb(red = 0.3, green = 0, blue = 0.7, alpha = 0.2), xlab = "Interphase (%)", ylab = "Prometaphase (%)")
+dev.off()
+
+#Inter vs AnaTelo:
+png(U2OS_Interphase_vs_AnaTelophase, file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Inter vs AnaTelo.png", width=600, height=600, units = "px")
+U2OS_Interphase_vs_AnaTelophase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.5, green = 0, blue = 0.5, alpha = 0.2), xlab = "Interphase (%)", ylab = "Anaphase/Telophase (%)")
+dev.off()
+
+#Prometa vs AnaTelo:
+png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Prometa vs AnaTelo.png", width=600, height=600, units = "px")
+U2OS_Prometaphase_vs_AnaTelophase <- plot(full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), xlab = "Prometaphase (%)", ylab = "Anaphase/Telophase (%)")
+dev.off()
+
+#Gene Size plots: 
+  
+png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Inter vs Gene size.png", width=600, height=600, units = "px")
+U2OSR1plot_Interphase_vs_GeneSize <- plot(full_U2OS_K4me3_avonly$Gene_size, full_U2OS_K4me3_avonly$U2OS_K4me3_Interphase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), ylab = "Interphase (%)", xlab = "Gene Size (kb)")
+dev.off()
+
+png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/Prometa vs Gene size.png", width=600, height=600, units = "px")
+U2OSR1plot_Prometaphase_vs_GeneSize <- plot(full_U2OS_K4me3_avonly$Gene_size, full_U2OS_K4me3_avonly$U2OS_K4me3_Prometaphase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), ylab = "Prometaphase (%)", xlab = "Gene Size (kb)")
+dev.off()
+
+png(file="C:/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Figures/Plots/U2OS/Blacklisted non normalized all genes/AnaTelo vs Gene size.png", width=600, height=600, units = "px")
+U2OSR1plot_AnaTelophase_vs_GeneSize <- plot(full_U2OS_K4me3_avonly$Gene_size, full_U2OS_K4me3_avonly$U2OS_K4me3_AnaTelophase_av, col = rgb(red = 0.7, green = 0, blue = 0.3, alpha = 0.2), ylab = "Anaphase/Telophase (%)", xlab = "Gene Size (kb)")
+dev.off()
+```
+
+Principle Component Analysis Preparation: 
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#Preparing for PCA analysis: 
+prcomp_df <- read.table("~/MRES/Project/Studies & Data/Mitotic/R scripts/prcomp.txt")
+colnames(prcomp_df)<-c("Replicate", "Phase", "Sample Name")
+```
