@@ -1,0 +1,132 @@
+---
+title: "Rhiannon_script"
+author: "Dan K"
+date: "28/04/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+
+library(GenomicRanges)
+library(plyranges)
+library(dplyr)
+
+```
+
+Load reference genome and ready for overlap:
+```{r}
+
+Genes <- read.table(file = "/Documents and Settings/rhian/Documents/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Reference Genome/mart_export.txt", header = T, sep = "\t")
+names(Genes)[names(Genes)=="Strand"] <- "Strand.x"
+Want <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X") 
+Genes <- subset(Genes, Genes$Chromosome.scaffold.name %in% Want)
+Genes$Chromosome.scaffold.name <- paste0('chr', Genes$Chromosome.scaffold.name)
+Genes <- Genes %>% group_by(Gene.stable.ID) %>% distinct(Gene.stable.ID,.keep_all = TRUE)
+
+Genes_GR <- makeGRangesFromDataFrame(Genes, keep.extra.columns = T, ignore.strand = T, seqnames.field = "Chromosome.scaffold.name", start.field = "Gene.start..bp.", end.field = "Gene.end..bp.")
+
+
+Genes_df <- data.frame(Genes)
+Genes_df <- mutate(Genes_df, Gene.stable.ID = Gene.stable.ID, width = Gene.end..bp.-Gene.start..bp.)
+Genes_size <- data.frame(Genes_df$Gene.stable.ID, Genes_df$width)
+View(Genes_size)
+write.csv(x = Genes_size, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Reference Genome/Genes Size Table.csv")
+```
+
+Check column names and make ready for percentage split:
+```{r}
+
+# H3K4me3 split over genes ####### 
+U2OS_H3K4me3_R2_Interphase <- read.table(file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/U2OS/results files/08-peak-calls/grch38/broad peak files/u2os_h3k4me3_R2_Interphase_broad_GRCh38_peaks.broadPeak", header = T, sep = "\t")
+U2OS_H3K4me3_R2_Interphase <- tibble::rowid_to_column( U2OS_H3K4me3_R2_Interphase, "ID")
+colnames(U2OS_H3K4me3_R2_Interphase) <-  c("ID", "chromosome", "startK4", "endK4", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue")
+U2OS_H3K4me3_R2_Interphase$startME3Interphase <- U2OS_H3K4me3_R2_Interphase$startK4
+U2OS_H3K4me3_R2_Interphase$endME3Interphase <- U2OS_H3K4me3_R2_Interphase$endK4
+U2OS_H3K4me3_R2_Interphase$chromosome<- paste0( 'chr',U2OS_H3K4me3_R2_Interphase$chromosome)
+U2OS_H3K4me3_R2_Interphase$widthBD <- U2OS_H3K4me3_R2_Interphase$endME3Interphase - U2OS_H3K4me3_R2_Interphase$startME3Interphase
+#Top_5percent_BD <- function( input_variable){
+ # n <- 5 #top 5%
+ # input_variable           <- input_variable[input_variable$widthBD > quantile(input_variable$widthBD,prob=1-n/100),]}
+
+#U2OS_H3K4me3_R2_Interphase <- Top_5percent_BD(U2OS_H3K4me3_R2_Interphase)
+
+U2OS_H3K4me3_R2_Interphase_GR <- makeGRangesFromDataFrame(U2OS_H3K4me3_R2_Interphase, keep.extra.columns = T, ignore.strand = T, seqnames.field = "chromosome", start.field = "startK4", end.field = "endK4")
+overlaps <- plyranges::join_overlap_inner(Genes_GR, U2OS_H3K4me3_R2_Interphase_GR)
+```
+Find overlaps of individual peaks and % coverage on the gene: 
+```{r}
+# Function to find overlaps of individual H3K4me3 peaks and % coverage on the gene and join them in a data frame
+MetaMerge <- function( Gene, H3K4me3) {
+  
+  test <- makeGRangesFromDataFrame(Gene, keep.extra.columns = TRUE, ignore.strand = F, seqnames.field ="Chromosome.scaffold.name", start.field = "Gene.start..bp.", end.field = "Gene.end..bp.")
+  test1 <- makeGRangesFromDataFrame( H3K4me3, keep.extra.columns = TRUE, ignore.strand = F, seqnames.field = "chromosome", start.field = "startK4", end.field = "endK4")
+  
+  hits_all <- findOverlaps( test, test1, select = c('arbitrary')) # Finds all overlaps
+  hits <- findOverlaps( test, test1) # Finds all overlaps
+  
+  bait_match_hit <- data.frame( test[ queryHits(hits)] ,stringsAsFactors=T)
+  K4_match_hit <- data.frame( test1[ subjectHits( hits)]  ,stringsAsFactors=T)
+  
+  x <- makeGRangesFromDataFrame( bait_match_hit, keep.extra.columns = T, ignore.strand = F)
+  y <- makeGRangesFromDataFrame( K4_match_hit, keep.extra.columns = T, ignore.strand = F)
+  overlaps <- pintersect( x,y)
+  percentageOverlap <- width( overlaps) / width( x)
+  match_hit <- data.frame( test[ queryHits( hits)] , data.frame( mcols( test1[ subjectHits( hits)] ) ), data.frame( percentageOverlap), stringsAsFactors=T)
+  
+  
+  df = as( match_hit, "data.frame")
+  return( df)
+}
+
+U2OS_R2_OG_H3K4me3_Interphase <- MetaMerge(Gene = Genes, H3K4me3 = U2OS_H3K4me3_R2_Interphase)
+U2OS_R2_OG_H3K4me3_Interphase_all <- merge(Genes, U2OS_R2_OG_H3K4me3_Interphase, by = "Gene.stable.ID", all.x = TRUE)
+
+#U2OS_R2_OG_H3K4me3_Interphase_hist <- hist(U2OS_R2_OG_H3K4me3_Interphase$percentageOverlap, main = "U2OS Interphase Replicate 1", xlab = "Broad Domain Percentage Overlap")
+head(U2OS_R2_OG_H3K4me3_Interphase %>% arrange(percentageOverlap))
+
+TEST <- U2OS_R2_OG_H3K4me3_Interphase  %>% 
+                                             group_by(Gene.stable.ID) %>% 
+                                             summarise(num=n(), totalH3 = sum(percentageOverlap), Gene.size = sum(width), Broad.domain.width  
+                                             = sum(widthBD))
+
+
+
+#Sum all H3K4me3 percentages by ID 
+U2OS_R2_OG_H3K4me3_Interphase1 <- aggregate(x = U2OS_R2_OG_H3K4me3_Interphase_all$percentageOverlap,  FUN = sum, by = list(U2OS_R2_OG_H3K4me3_Interphase_all$Gene.stable.ID))
+#U2OS_R2_OG_H3K4me3_Interphase1 <-   U2OS_R2_OG_H3K4me3_Interphase1 %>% arrange(Group.1)
+#U2OS_R2_OG_H3K4me3_Interphase1 <- na.omit(U2OS_R2_OG_H3K4me3_Interphase1)
+
+U2OS_R2_OG_H3K4me3_Interphase1[is.na(U2OS_R2_OG_H3K4me3_Interphase1)] <- 0
+
+Top_5percent_BD <- function( input_variable){
+  n <- 5 #top 5%
+  input_variable           <- input_variable[input_variable$x > quantile(input_variable$x,prob=1-n/100),]}
+
+U2OS_R2_OG_H3K4me3_Interphase1 <- Top_5percent_BD(U2OS_R2_OG_H3K4me3_Interphase1)
+
+View(U2OS_R2_OG_H3K4me3_Interphase1)
+
+write.csv(x = U2OS_R2_OG_H3K4me3_Interphase1, file = "~/MRES/Project/Studies & Data/Mitotic/Kang et al 2020/Data Analyses/Final R Scripts, Workspaces, and Graphs/Excel Files/U2OS/Non Normalised/Top 5%/U2OS_R2_H3K4me3_Interphase.csv")
+
+```
+
+```{r}
+
+#filter original U2OS_R2_OG_H3K4me3_Interphase df (with total %) per row  
+#U2OS_R2_OG_H3K4me3_Interphase2 <- data.frame(U2OS_R2_OG_H3K4me3_Interphase %>% 
+  #group_by(Gene.stable.ID) %>% 
+  #distinct(Gene.stable.ID,.keep_all = TRUE) %>% 
+  #arrange(Gene.stable.ID))
+
+# combine the unique rows and add the total % per gene 
+#U2OS_R2_OG_H3K4me3_Interphase <- cbind(U2OS_R2_OG_H3K4me3_Interphase2, U2OS_R2_OG_H3K4me3_Interphase1) # x is the total % overlap of H3K4me3 for that gene 
+#colnames(U2OS_R2_OG_H3K4me3_Interphase2) #add these to the below
+#colnames(U2OS_R2_OG_H3K4me3_Interphase) <- c("seqname", "start", "end", "width", "strand", "Gene.stable.ID", "Gene.name", "Strand.x", "Transcription.start.site..TSS.", "P.value", "ID", "name", "score", "strandK4", "signalvalue", "pvalue", "qvalue", "startME3Interphase", "endME3Interphase", "percentageOverlap_old", "Old_gene_ID", "percentageOverlap") # insert U2OS_R2_OG_H3K4me3_Interphase column names
+
+```
